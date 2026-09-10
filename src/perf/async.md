@@ -40,7 +40,7 @@ def save_to_database(data):
 
 data = requests.get('https://data.aggregator.com/films')
 processed_data = do_some_logic(data)
-save_to_database(data)
+save_to_database(processed_data)
 ```
 
 Код совершенно линейный, и пока запрос один, всё хорошо, но стоит написанному коду обслуживать многих клиентов сразу, и время ответа поплывёт. Бо́льшую часть времени интерпретатор не делает ничего полезного, а ждёт запроса от клиента, ждёт ответа от внешнего сайта, ждёт записи, подтверждённой базой. А клиенты в это время ждут его.
@@ -93,6 +93,8 @@ save_to_database(data)
 
 
 ```python
+from __future__ import annotations
+
 import logging
 from typing import Generator
 from queue import Queue
@@ -180,11 +182,11 @@ class Task:
 
 
 ```python
-def double(x):
+def square(x):
     yield x * x
 
 def add(x, y):
-    yield from double(x + y)
+    yield from square(x + y)
 
 def main():
     result = yield add(1, 2)
@@ -422,12 +424,10 @@ async def value():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(value())
-    loop.close()
+    asyncio.run(value())
 ```
 
-Изменений немного. Переменная `loop` содержит тот самый планировщик задач, устроенный по разобранным выше принципам. А переключением между корутинами теперь заведует `await`.
+Изменений немного. Функция `asyncio.run` заводит тот самый планировщик задач, устроенный по разобранным выше принципам, и закрывает его по завершении. А переключением между корутинами теперь заведует `await`.
 
 Познакомимся с основными функциями `asyncio`, часто встречающимися на практике:
 
@@ -554,7 +554,7 @@ app = FastAPI(title="Простые математические операци�
 
 class Add(BaseModel):
     first_number: int = Field(title='Первое слагаемое')
-    second_number: Optional[int] = Field(title='Второе слагаемое')
+    second_number: Optional[int] = Field(None, title='Второе слагаемое')
 
 class Result(BaseModel):
     result: int = Field(title='Результат')
