@@ -83,6 +83,9 @@ def trace(func):
 Иногда декоратор нужно настроить, скажем указать `trace`, куда писать. Тут появляется третий уровень вложенности, сбивающий с толку всех подряд. Объясняется он просто: запись `@trace(sys.stderr)` означает два действия, а не одно. Сначала вызывается `trace(sys.stderr)`, и только полученный результат применяется к функции как декоратор, а значит, `trace` возвращает декоратор, который уже возвращает обёртку.
 
 ```python
+import sys
+
+
 def trace(handle):
     def decorator(func):
         @functools.wraps(func)
@@ -247,6 +250,9 @@ def post(cond, message):
 Использование:
 
 ```python
+import math
+
+
 @pre(lambda x: 0 < x < 1, "argument must be a fraction")
 @post(lambda r: r < 0, "log of a fraction must be negative")
 def log_fraction(x):

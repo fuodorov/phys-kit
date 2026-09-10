@@ -19,7 +19,7 @@ large_list = list(range(1000000))
 large_set = set(large_list)
 
 # Ищем случайный элемент
-target = random.randint(0, 1000000)
+target = random.randrange(1000000)
 
 # Время поиска в списке (O(n))
 list_time = timeit(lambda: target in large_list, number=1000)
@@ -259,7 +259,7 @@ def find_common_elements_fast(list1, list2):
     set2 = set(list2)            # O(m) - создание множества
     result = []
     for item in list1:           # O(n)
-        if item in set2:         # O(1) - поиск в хэш-таблице!
+        if item in set2:         # O(1) - поиск в хеш-таблице!
             result.append(item)
     return result
 ```
