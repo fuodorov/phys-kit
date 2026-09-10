@@ -47,28 +47,28 @@
 MG-LA1.QLF1: QUAD, L=0.115, K1=-10.115
 MG-LA1.D250: DRIFT, L=0.250
 MG-LA1.CL2:  KICKER
-MG-LA1.D150: DRIFT, L=0.100
+MG-LA1.D150: DRIFT, L=0.150
 MG-LA1.QLD1: QUAD, L=0.115, K1=8.67
 MG-LA1.D400: DRIFT, L=0.400
 BI-LA1.PK3:  MONI
 ```
 
-Описаны в файле пять секций, набранных из квадруполей, корректоров, пикапов и дрейфов. Импульс, набираемый пучком, растёт от 38 МэВ/c на первой секции до 190 МэВ/c на пятой, а разгоняют его четыре резонатора с напряжением 36 МВ и частотой 2856 МГц, записанные тем же синтаксисом. Дрейфы и линии, перечисленные в файле, каналов не порождают: канал заводится только для элемента, чей тип найден в таблице обработчиков.
+Описаны в файле пять секций, набранных из квадруполей, корректоров, пикапов и дрейфов. Импульс, набираемый пучком, растёт от 38 МэВ/c на первой секции до 182 МэВ/c на пятой, а разгоняют его четыре резонатора с напряжением 36 МВ и частотой 2856 МГц, записанные тем же синтаксисом. Дрейфы и линии, перечисленные в файле, каналов не порождают: канал заводится только для элемента, чей тип найден в таблице обработчиков.
 
 Рядом лежит таблица, где для каждого типа элемента перечислены параметры, выставляемые наружу. Отмечено и то, какие из перечисленных можно менять, а какие только читать.
 
 ```python
 ELEMENT_HANDLERS = {
     'QUAD': {
-        'K1':    {'pv_suffix': 'K1',    'is_read_only': False, 'scale': 1.0},
-        'DX':    {'pv_suffix': 'DX',    'is_read_only': False, 'scale': PK_MONITOR_SCALE_FACTOR},
-        'betax': {'pv_suffix': 'betax', 'is_read_only': True,  'scale': 1.0},
-        'betay': {'pv_suffix': 'betay', 'is_read_only': True,  'scale': 1.0},
+        'K1':    {'pv_suffix': 'K1',    'is_read_only': False, 'precision': 6, 'scale': 1.0},
+        'DX':    {'pv_suffix': 'DX',    'is_read_only': False, 'precision': 6, 'scale': PK_MONITOR_SCALE_FACTOR},
+        'betax': {'pv_suffix': 'betax', 'is_read_only': True,  'precision': 6, 'scale': 1.0},
+        'betay': {'pv_suffix': 'betay', 'is_read_only': True,  'precision': 6, 'scale': 1.0},
         ...
     },
     'MONI': {
-        'Cx': {'pv_suffix': 'Cx', 'is_read_only': True, 'scale': PK_MONITOR_SCALE_FACTOR},
-        'Cy': {'pv_suffix': 'Cy', 'is_read_only': True, 'scale': PK_MONITOR_SCALE_FACTOR},
+        'Cx': {'pv_suffix': 'Cx', 'is_read_only': True, 'precision': 6, 'scale': PK_MONITOR_SCALE_FACTOR},
+        'Cy': {'pv_suffix': 'Cy', 'is_read_only': True, 'precision': 6, 'scale': PK_MONITOR_SCALE_FACTOR},
         ...
     },
 }
@@ -81,12 +81,12 @@ etype = tokens[0].upper()
 if etype in ELEMENT_HANDLERS:
     for param_name, field_def in ELEMENT_HANDLERS[etype].items():
         pv_name = get_pv_name(name, field_def['pv_suffix'])
-        initial_val_ele = parse_param_value(rest, field_def['param_name'])
+        initial_val_ele = parse_param_value(rest, param_name)
         ...
         pvdb[pv_name] = {'type': 'float', 'prec': field_def['precision'],
                          'value': initial_val_ele * scale}
         element_map[pv_name] = {'name': name, 'type': etype,
-                                'param': field_def['param_name'],
+                                'param': param_name,
                                 'read_only': field_def['is_read_only'],
                                 'scale': scale}
 ```

@@ -6,7 +6,7 @@
 
 Генетические алгоритмы работают по аналогии с естественным отбором в природе, а основу генетического алгоритма составляют особь, хромосомы (гены), популяция (набор особей), функции приспособленности, отбора, скрещивания и мутации. На практике всё происходит так. Создание первого поколения, оценка, отбор, скрещивание, мутация, новое поколение, оценка, и так далее, пока не получим желаемый результат.
 
-DEAP представляет собой фреймворк для работы с генетическими алгоритмами, в котором уже есть множество готовых инструментов, надо только знать, как ими пользоваться.
+DEAP [41] представляет собой фреймворк для работы с генетическими алгоритмами, в котором уже есть множество готовых инструментов, надо только знать, как ими пользоваться.
 
 ## Создаём пучок и ускоритель
 
@@ -314,6 +314,7 @@ Sol_B_min = 0.005 # [T] min Bz
 Sol_Num = 9     # quantity
 
 CXPB = 0.4       # cross chance
+CX_INDPB = 0.6  # вероятность обмена одним геном
 MUTPB = 0.6     # Mutation probability
 NGEN = 100       # Number of generations
 POP = 100       # Number of individuals
@@ -343,28 +344,29 @@ def evalution_envelope(individual):
     simulation = kv.Simulation(beam, accelerator)
     simulation.track()
     
-    tuple(envelope_mod)
-    tuple(simulation.envelope_x(accelerator.parameter))
-
-    sqerrors = np.sqrt((envelope_mod-simulation.envelope_x(accelerator.parameter))**2)
+    abs_errors = np.abs(envelope_mod - simulation.envelope_x(accelerator.parameter))
     
-    return sum(sqerrors)/len(accelerator.parameter),
+    return abs_errors.mean(),
 ```
 
 Остаётся сказать DEAP, чем скрещивать, чем мутировать и как отбирать. Скрещивание равномерное, потомок берёт каждый ген у одного из двух родителей; мутация гауссова, к полю соленоида добавляется случайная добавка; отбор турнирный.
 
 ```python
 toolbox.register("evaluate", evalution_envelope)
-toolbox.register("mate", tools.cxUniform, indpb=MUTPB )
+toolbox.register("mate", tools.cxUniform, indpb=CX_INDPB)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=(Sol_B_max - Sol_B_min)/2, indpb=MUTPB)
 toolbox.register("select", tools.selTournament, tournsize=TOURN)
 
 
-def clip(individual):
+def clip(func):
     """Загоняет поля обратно в коридор после скрещивания и мутации."""
-    for i, b in enumerate(individual):
-        individual[i] = min(max(b, Sol_B_min), Sol_B_max)
-    return individual
+    def wrapper(*args, **kwargs):
+        offspring = func(*args, **kwargs)
+        for child in offspring:
+            for i, b in enumerate(child):
+                child[i] = min(max(b, Sol_B_min), Sol_B_max)
+        return offspring
+    return wrapper
 ```
 
 Без последней функции объявленные `Sol_B_min` и `Sol_B_max` остались бы просто
@@ -393,8 +395,6 @@ mstats.register("avg", np.mean)
 mstats.register("std", np.std)
 mstats.register("min", np.min)
 mstats.register("max", np.max)
-
-logbook = tools.Logbook()
 ```
 
 Всё готово, и мы запускаем `eaSimple`, реализующий самую простую эволюционную схему, оценивающую популяцию, отбирающую, скрещивающую, мутирующую и повторяющую всё это сто раз.
@@ -526,10 +526,6 @@ z_r_gen = hv.Area(((accelerator.parameter,simulation.envelope_x(accelerator.para
 
 
 
-
-```python
-
-```
 
 ## Что получилось
 
