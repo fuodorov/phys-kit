@@ -279,7 +279,8 @@ def save_run(con, run_row, points):
     try:
         # первый INSERT неявно открывает транзакцию
         cur.execute(
-            "INSERT INTO runs (experiment_id, run_number, energy_mev, started_at) "
+            "INSERT INTO runs "
+            "(experiment_id, run_number, energy_mev, started_at) "
             "VALUES (?, ?, ?, ?)",
             run_row,
         )
@@ -311,7 +312,7 @@ def save_run(con, run_row, points):
 | Сильная сторона | нулевая настройка, переносимость | функциональность и расширения (PostGIS, TimescaleDB) | распространённость в веб-хостинге |
 | Типичный случай | локальные данные, прототипы, файлы до единиц ГБ | серверное приложение, общая база группы | веб-проекты, легаси-системы |
 
-Правило, проверенное практикой, простое. Если данные лежат на твоём диске и работаешь с ними ты и твои скрипты, бери **SQLite** и не выдумывай лишнего. Если база нужна нескольким людям или сервисам по сети, если пишут в неё одновременно и требуются права доступа, бери **PostgreSQL**, сегодня это выбор по умолчанию для серверной СУБД. **MySQL** чаще достаётся как данность вместе с унаследованным проектом или хостингом, чем выбирается осознанно для новой системы.
+Правило, проверенное практикой, простое. Если данные лежат на твоём диске и работаешь с ними ты и твои скрипты, бери **SQLite** и не выдумывай лишнего. Если база нужна нескольким людям или сервисам по сети, если пишут в неё одновременно и требуются права доступа, бери **PostgreSQL** [17], сегодня это выбор по умолчанию для серверной СУБД. **MySQL** чаще достаётся как данность вместе с унаследованным проектом или хостингом, чем выбирается осознанно для новой системы.
 
 ## ORM: SQLAlchemy
 
@@ -332,7 +333,9 @@ class Run(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     energy_mev: Mapped[float]
     # связь "один ко многим": у захода — список измерений
-    measurements: Mapped[list["Measurement"]] = relationship(back_populates="run")
+    measurements: Mapped[list["Measurement"]] = relationship(
+        back_populates="run"
+    )
 
 class Measurement(Base):
     __tablename__ = "measurements"
@@ -344,7 +347,7 @@ class Measurement(Base):
     run: Mapped[Run] = relationship(back_populates="measurements")
 
 engine = create_engine("sqlite:///lab.db")  # та же база, поменяется только URL
-Base.metadata.create_all(engine)            # создаёт таблицы по описанию классов
+Base.metadata.create_all(engine)            # создаёт таблицы по классам
 
 with Session(engine) as session:
     # объекты вместо INSERT: связи расставляются сами
@@ -365,11 +368,11 @@ ORM оправдан в приложении с десятком связанн�
 
 ## Нереляционные базы данных
 
-Реляционная модель универсальна, но не единственна. Под конкретные профили нагрузки есть специализированные базы, называемые скопом «NoSQL». Знать их надо хотя бы обзорно, чтобы узнавать подходящую задачу в лицо.
+Реляционная модель универсальна, но не единственна. Под конкретные профили нагрузки есть специализированные базы, называемые скопом «NoSQL». Знать их надо хотя бы обзорно, чтобы узнавать подходящую задачу в лицо. Устройство таких хранилищ и цена, которую платят за каждый выбранный компромисс, подробно разобраны у Клеппмана [16].
 
-Проще всех устроено хранилище пар «ключ → значение», [Redis](https://redis.io/). Оно живёт в оперативной памяти, и выполняемые операции занимают микросекунды. Типичными ролями становятся кеш (результат тяжёлого запроса или расчёта кладётся под ключ с заданным временем жизни), очереди задач между процессами (на Redis работают брокеры для Celery), счётчики и pub/sub-уведомления. Запись на диск есть, но включается по желанию. Redis отвечает за скорость, а не за главное хранилище истины.
+Проще всех устроено хранилище пар «ключ → значение», [Redis](https://redis.io/). Оно живёт в оперативной памяти, и выполняемые операции занимают микросекунды. Типичными ролями становятся кеш (результат тяжёлого запроса или расчёта кладётся под ключ с заданным временем жизни), очереди задач между процессами (на Redis работают брокеры для Celery), счётчики и pub/sub-уведомления. Запись на диск есть, но включается по желанию. Redis отвечает за скорость, а не за главное хранилище истины; приёмы, ради которых его и заводят, собраны у Карлсона [19].
 
-Там, где у записей нет общей структуры, берут документные базы вроде [MongoDB](https://www.mongodb.com/). Единицей хранения служит документ, вложенная структура вроде JSON; документы собираются в коллекции, и жёсткой схемы нет, поэтому соседние документы могут иметь разные поля. Удобно для разнородных метаданных, меняющих структуру от записи к записи. Подвох в том, что «отсутствие схемы» означает лишь одно. Схема живёт не в базе, а в голове и в коде, и проверять её теперь тоже тебе.
+Там, где у записей нет общей структуры, берут документные базы вроде [MongoDB](https://www.mongodb.com/). Единицей хранения служит документ, вложенная структура вроде JSON; документы собираются в коллекции, и жёсткой схемы нет, поэтому соседние документы могут иметь разные поля. Удобно для разнородных метаданных, меняющих структуру от записи к записи. Подвох в том, что «отсутствие схемы» означает лишь одно. Схема живёт не в базе, а в голове и в коде, и проверять её теперь тоже тебе. Что из этого следует на практике, разобрано в руководстве по MongoDB [18].
 
 Телеметрию установки, то есть давление в вакуумной камере, токи магнитов и температуры, приходящие с сотен датчиков каждую секунду годами, держат в базах временных рядов. Это то, что в ускорительной технике называется slow control, и [InfluxDB](https://www.influxdata.com/) заточена под такой поток «метка времени → значение» с тегами. Такие базы умеют автоматически прореживать и удалять устаревшие данные (retention policies), быстро агрегировать по окнам времени («среднее за каждую минуту последних суток») и штатно стыкуются с [Grafana](https://grafana.com/) для живых дашбордов мониторинга. Близким родственником в мире PostgreSQL выступает расширение TimescaleDB.
 
@@ -399,9 +402,30 @@ Redis держит недолго живущее: кеш частых запро
 
 ## Одна задача в четырёх хранилищах
 
-Всё сказанное выше проще увидеть на примере, доводимом до кода. Возьмём учебный сервис, список записей с операциями «прочитать страницу», «добавить», «изменить», «удалить», и переложим его последовательно в четыре хранилища: текстовый файл, структуру в оперативной памяти, реляционную базу и кеш поверх неё.
+Всё сказанное выше проще увидеть на примере, доводимом до кода. Возьмём учебный сервис, список записей с операциями «прочитать страницу», «добавить», «изменить», «удалить», и переложим его последовательно в четыре хранилища: текстовый файл со строками произвольной длины, файл с записями фиксированной длины, реляционную базу и кеш поверх неё.
 
 Смотреть надо не на код, почти не меняющийся от варианта к варианту, а на то, где лежат данные и во что обходится каждая операция. Про сложность операций и структуры данных речь шла в главе [«Основные структуры данных»](../cs/basic-structures.md), и здесь мы увидим ту же арифметику на живом сервисе.
+
+Сервис написан на микрофреймворке [Flask](https://flask.palletsprojects.com/): декоратор `@app.route` привязывает функцию к URL и методу, объект `request` даёт доступ к параметрам и телу запроса. Шапка, приведённая ниже, общая для всех вариантов, и дальше она не повторяется.
+
+```python
+import json
+from contextlib import closing
+
+import psycopg2
+import redis
+from flask import Flask, request
+
+app = Flask(__name__)
+
+FILE_PATH = 'data.txt'
+PAGE_SIZE = 20
+ELEMENT_SIZE = 64
+FILL_CHAR = b' '
+TTL = 60
+postgres_creds = {'dbname': 'lab', 'host': 'localhost'}
+redis_creds = {'host': 'localhost', 'port': 6379}
+```
 
 ### Наивное решение. GET
 
@@ -416,7 +440,7 @@ def paginated_get():
     result = []
     with open(FILE_PATH, 'r') as f:
         for i, line in enumerate(f.readlines()[first:last]):
-            result.append( {'id': first + i, 'data': line.strip()})
+            result.append({'id': first + i, 'data': line.strip()})
     return {"result": result}
 ```
 
@@ -427,7 +451,7 @@ def paginated_get():
 def post():
     data = request.json['data']
     with open(FILE_PATH, 'a') as f:
-        f.write('\n' + data)
+        f.write(data + '\n')
     return {}, 201
 ```
 
@@ -458,7 +482,7 @@ def delete(data_id):
     return {}, 204
 ```
 
-### Фиксированный. GET
+### Фиксированные записи. GET
 
 Если отвести каждой записи одинаковое число байт, файл превращается в массив, и нужную запись читаем сразу, перескочив к её смещению через `seek()`. Зато удаление дорожает: хвост файла, который тянется за ней, приходится сдвигать вручную.
 
@@ -471,12 +495,12 @@ def paginated_get():
     with open(FILE_PATH, 'rb') as f:
         f.seek(first * ELEMENT_SIZE)
         data = f.read(PAGE_SIZE * ELEMENT_SIZE)
-        for i, n in enumerate(range(PAGE_SIZE)):
+        for i in range(PAGE_SIZE):
             result.append(
                 {
                     "id": first + i,
                     "data": (
-                        data[n * ELEMENT_SIZE: (n + 1) * ELEMENT_SIZE].
+                        data[i * ELEMENT_SIZE: (i + 1) * ELEMENT_SIZE].
                         strip(FILL_CHAR).decode('utf-8')
                     )
                 }
@@ -484,9 +508,10 @@ def paginated_get():
     return {"result": result}
 ```
 
-### Фиксированный. POST
+### Фиксированные записи. POST
 
 ```python
+@app.route('/', methods=['POST'])
 def post():
     data = str(request.json['data'])
     with open(FILE_PATH, 'a+b') as f:
@@ -494,7 +519,7 @@ def post():
     return {}, 201
 ```
 
-### Фиксированный. PUT
+### Фиксированные записи. PUT
 
 ```python
 @app.route('/<int:data_id>', methods=['PUT'])
@@ -506,7 +531,7 @@ def put(data_id):
     return {}, 204
 ```
 
-### Фиксированный. DELETE
+### Фиксированные записи. DELETE
 
 ```python
 @app.route('/<int:data_id>', methods=['DELETE'])
@@ -527,32 +552,33 @@ def delete(data_id):
     return {}, 204
 ```
 
-### Database. GET
+### Реляционная база. GET
 
-Настоящая база данных прячет всю эту механику за индексами, а искать по ключу, вставлять и удалять она умеет сама, и делает это не хуже структур, которые разбирались в этой главе.
+Настоящая база данных прячет всю эту механику за индексами, а искать по ключу, вставлять и удалять она умеет сама, и делает это не хуже структур данных, разобранных в главе [«Основные структуры данных»](../cs/basic-structures.md).
 
 ```python
 @app.route('/', methods=['GET'])
 def paginated_get():
     page = int(request.args.get('page', '0'))
-    with closing(psycopg2.connect(dbname=dbname, host=host)) as conn:
+    with closing(psycopg2.connect(**postgres_creds)) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                'SELECT "id", "todo" FROM "todos" ORDER BY "id" OFFSET %s LIMIT %s;',
+                'SELECT "id", "todo" FROM "todos" '
+                'ORDER BY "id" OFFSET %s LIMIT %s;',
                 (page * PAGE_SIZE, PAGE_SIZE)
             )
             return {
-                "result": [ {"id": row[0], "data": row[1]} for row in cursor]
+                "result": [{"id": row[0], "data": row[1]} for row in cursor]
             }
 ```
 
-### Database. POST
+### Реляционная база. POST
 
 ```python
 @app.route('/', methods=['POST'])
 def post():
     data = str(request.json['data'])
-    with closing(psycopg2.connect(dbname=dbname, host=host)) as conn:
+    with closing(psycopg2.connect(**postgres_creds)) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
                 'INSERT INTO "todos" ("todo") VALUES (%s) RETURNING "id";',
@@ -562,13 +588,13 @@ def post():
             return {"id": cursor.fetchone()[0]}, 201
 ```
 
-### Database. PUT
+### Реляционная база. PUT
 
 ```python
 @app.route('/<int:data_id>', methods=['PUT'])
 def put(data_id):
     data = request.json['data']
-    with closing(psycopg2.connect(dbname=dbname, host=host)) as conn:
+    with closing(psycopg2.connect(**postgres_creds)) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
                 'UPDATE "todos" SET "todo" = %s WHERE "id" = %s;',
@@ -578,12 +604,12 @@ def put(data_id):
             return {}, 204
 ```
 
-### Database. DELETE
+### Реляционная база. DELETE
 
 ```python
 @app.route('/<int:data_id>', methods=['DELETE'])
 def delete(data_id):
-    with closing(psycopg2.connect(dbname=dbname, host=host)) as conn:
+    with closing(psycopg2.connect(**postgres_creds)) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
                 'DELETE FROM "todos" WHERE "id" = %s;',
@@ -593,7 +619,7 @@ def delete(data_id):
             return {}, 204
 ```
 
-### Cache. GET
+### Кеш. GET
 
 Наконец, самые частые запросы можно вовсе не доводить до базы: готовый ответ кладётся в Redis и в следующий раз отдаётся прямо из оперативной памяти.
 
@@ -601,24 +627,104 @@ def delete(data_id):
 @app.route('/', methods=['GET'])
 def paginated_get():
     page = int(request.args.get('page', '0'))
-                                
-    redis_client = redis.StrictRedis(**redis_creds)
+
+    redis_client = redis.Redis(**redis_creds)
     cached_page = redis_client.get(page)
-                                
+
     if cached_page:
         return cached_page
-                                
+
     with closing(psycopg2.connect(**postgres_creds)) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                'SELECT "id", "todo" FROM "todos" ORDER BY "id" OFFSET %s LIMIT %s;',
+                'SELECT "id", "todo" FROM "todos" '
+                'ORDER BY "id" OFFSET %s LIMIT %s;',
                 (page * PAGE_SIZE, PAGE_SIZE)
             )
             result = json.dumps({
                 "result": [{"id": row[0], "data": row[1]} for row in cursor]
             })
-            redis_client.set(page, result, ex=ttl)
+            redis_client.set(page, result, ex=TTL)
             return result
+```
+
+У кеша есть и обратная сторона: сделавший POST или PUT не увидит собственной правки, пока не истечёт `TTL`, и чем длиннее время жизни ключа, тем дольше сервис отдаёт заведомо устаревшее. Поэтому каждая изменяющая операция обязана сбрасывать затронутые ею ключи, а вся трудность в том, чтобы понять, какие именно: правка обесценивает ровно ту страницу, на которой лежит запись, а вставка и удаление двигают нумерацию и обесценивают всё, что тянется дальше.
+
+### Кеш. POST
+
+Вставка попадает в конец списка, но гадать, где именно он кончается, дороже, чем сбросить страницы целиком.
+
+```python
+@app.route('/', methods=['POST'])
+def post():
+    data = str(request.json['data'])
+    with closing(psycopg2.connect(**postgres_creds)) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                'INSERT INTO "todos" ("todo") VALUES (%s) RETURNING "id";',
+                (data,)
+            )
+            conn.commit()
+            new_id = cursor.fetchone()[0]
+
+    redis_client = redis.Redis(**redis_creds)
+    cached_pages = redis_client.keys()  # в кеше лежат только страницы
+    if cached_pages:
+        redis_client.delete(*cached_pages)
+    return {"id": new_id}, 201
+```
+
+### Кеш. PUT
+
+Правка не двигает нумерацию, поэтому номер страницы считается по числу записей, лежащих перед изменённой, и сбрасывается один-единственный ключ.
+
+```python
+@app.route('/<int:data_id>', methods=['PUT'])
+def put(data_id):
+    data = request.json['data']
+    with closing(psycopg2.connect(**postgres_creds)) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                'UPDATE "todos" SET "todo" = %s WHERE "id" = %s;',
+                (data, data_id)
+            )
+            cursor.execute(
+                'SELECT count(*) FROM "todos" WHERE "id" < %s;',
+                (data_id,)
+            )
+            page = cursor.fetchone()[0] // PAGE_SIZE
+            conn.commit()
+
+    redis_client = redis.Redis(**redis_creds)
+    redis_client.delete(page)
+    return {}, 204
+```
+
+### Кеш. DELETE
+
+После удаления всё, что лежало дальше, подтягивается на одну позицию вперёд, поэтому устаревают и страница удалённой записи, и каждая следующая за ней.
+
+```python
+@app.route('/<int:data_id>', methods=['DELETE'])
+def delete(data_id):
+    with closing(psycopg2.connect(**postgres_creds)) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                'SELECT count(*) FROM "todos" WHERE "id" < %s;',
+                (data_id,)
+            )
+            page = cursor.fetchone()[0] // PAGE_SIZE
+            cursor.execute(
+                'DELETE FROM "todos" WHERE "id" = %s;',
+                (data_id,)
+            )
+            conn.commit()
+
+    redis_client = redis.Redis(**redis_creds)
+    stale = [key for key in redis_client.keys() if int(key) >= page]
+    if stale:
+        redis_client.delete(*stale)
+    return {}, 204
 ```
 
 ## Pandas и базы данных
