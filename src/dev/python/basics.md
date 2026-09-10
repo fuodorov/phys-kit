@@ -101,7 +101,7 @@ print(y, y + 1, y * 2, y ** 2) # Выведет "2.5 3.5 5.0 6.25"
     2.5 3.5 5.0 6.25
 
 
-В отличие от многих языков, в Python нет унарных операторов инкремента (x++) и декремента (x--). Зато есть встроенные типы для длинных целых и комплексных чисел, все подробности о которых найдёшь в [документации](https://docs.python.org/3.7/library/stdtypes.html#numeric-types-int-float-long-complex).
+В отличие от многих языков, в Python нет унарных операторов инкремента (x++) и декремента (x--). Зато целые здесь неограниченной точности — отдельного типа для длинных целых, как в Python 2, нет, `int` растёт, пока хватает памяти, — и есть встроенный тип комплексных чисел, все подробности о которых найдёшь в [документации](https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex).
 
 ### Булевы значения
 
@@ -162,6 +162,17 @@ print(hw12)  # выведет "hello world 12"
     hello world 12
 
 
+Так строки собирали до версии 3.6, и в чужом коде ты этот стиль ещё не раз встретишь, но новое пишут f-строками, которые с тех пор и стали основным способом: перед кавычками ставится буква `f`, а всё, что стоит внутри строки в фигурных скобках, вычисляется и подставляется на место.
+
+
+```python
+n = 12
+print(f'{hello} {world} {n}')  # выведет "hello world 12"
+```
+
+    hello world 12
+
+
 У строковых объектов есть куча полезных методов.
 
 
@@ -184,7 +195,7 @@ print('  world '.strip())  # Удаление пробелов в начале �
     world
 
 
-Список всех строковых методов найдёшь в [документации](https://docs.python.org/3.7/library/stdtypes.html#string-methods).
+Список всех строковых методов найдёшь в [документации](https://docs.python.org/3/library/stdtypes.html#string-methods).
 
 ## Контейнеры
 
@@ -232,7 +243,7 @@ print(x, xs)
     bar [3, 1, 'foo']
 
 
-Как обычно, все кровавые подробности о списках найдёшь в [документации](https://docs.python.org/3.7/tutorial/datastructures.html#more-on-lists).
+Как обычно, все кровавые подробности о списках найдёшь в [документации](https://docs.python.org/3/tutorial/datastructures.html#more-on-lists).
 
 ### Срезы
 
@@ -279,7 +290,7 @@ for animal in animals:
 ```python
 animals = ['cat', 'dog', 'monkey']
 for idx, animal in enumerate(animals):
-    print('#%d: %s' % (idx + 1, animal))
+    print(f'#{idx + 1}: {animal}')
 ```
 
     #1: cat
@@ -287,7 +298,7 @@ for idx, animal in enumerate(animals):
     #3: monkey
 
 
-### Генераторы списков (list comprehensions)
+### Списковые включения (list comprehensions)
 
 При программировании нам часто нужно преобразовать данные одного вида в другой, и в качестве простого примера рассмотрим код, вычисляющий квадраты чисел.
 
@@ -303,7 +314,7 @@ print(squares)
     [0, 1, 4, 9, 16]
 
 
-Этот код можно записать проще с помощью генератора списка (list comprehension).
+Этот код можно записать проще с помощью спискового включения (list comprehension).
 
 
 ```python
@@ -370,14 +381,14 @@ print(d.get('fish', 'N/A')) # ключа "fish" больше нет; вывед�
     N/A
 
 
-Всё, что нужно знать о словарях, найдёшь в [документации](https://docs.python.org/3.7/library/stdtypes.html#dict), а итерироваться по ключам словаря легко.
+Всё, что нужно знать о словарях, найдёшь в [документации](https://docs.python.org/3/library/stdtypes.html#dict), а итерироваться по ключам словаря легко.
 
 
 ```python
 d = {'person': 2, 'cat': 4, 'spider': 8}
 for animal in d:
     legs = d[animal]
-    print('A %s has %d legs' % (animal, legs))
+    print(f'A {animal} has {legs} legs')
 ```
 
     A person has 2 legs
@@ -385,7 +396,7 @@ for animal in d:
     A spider has 8 legs
 
 
-Генераторы словарей (dictionary comprehensions) похожи на list comprehensions, но позволяют легко строить словари.
+Словарные включения (dictionary comprehensions) похожи на списковые, но позволяют легко строить словари.
 
 
 ```python
@@ -441,16 +452,18 @@ _Циклы_. Итерация по множеству синтаксическ�
 ```python
 animals = {'cat', 'dog', 'fish'}
 for idx, animal in enumerate(animals):
-    print('#%d: %s' % (idx + 1, animal))
-# Выведет "#1: fish", "#2: dog", "#3: cat"
+    print(f'#{idx + 1}: {animal}')
+# Порядок зависит от хеш-сида процесса и от запуска к запуску меняется
 ```
+
+Один из возможных порядков:
 
     #1: fish
     #2: dog
     #3: cat
 
 
-Генераторы множеств: как и списки со словарями, множества легко строить с помощью set comprehensions.
+Множественные включения: как и списки со словарями, множества легко строить с помощью set comprehensions.
 
 
 ```python
@@ -528,9 +541,9 @@ def hello(name: str, loud: bool=False) -> None:
     '''
     
     if loud:
-        print('HELLO, %s' % name.upper())
+        print(f'HELLO, {name.upper()}')
     else:
-        print('Hello, %s!' % name)
+        print(f'Hello, {name}!')
 
 hello('Bob')
 hello('Fred', loud=True)
@@ -576,9 +589,9 @@ class Greeter:
     # Метод экземпляра
     def greet(self, loud: bool=False) ->None:
         if loud:
-            print('HELLO, %s!' % self.name.upper())
+            print(f'HELLO, {self.name.upper()}!')
         else:
-            print('Hello, %s' % self.name)
+            print(f'Hello, {self.name}')
 
 g = Greeter('Fred')  # Создаём экземпляр класса Greeter
 g.greet()            # Вызываем метод экземпляра; выведет "Hello, Fred"
@@ -611,13 +624,7 @@ help(Greeter)
      |      Initialize self.  See help(type(self)) for accurate signature.
      |  
      |  greet(self, loud: bool = False) -> None
-     |      # Instance method
-     |  
-     |  ----------------------------------------------------------------------
-     |  Data descriptors defined here:
-     |  
-     |  __dict__
-     |      dictionary for instance variables (if defined)
-     |  
-     |  __weakref__
-     |      list of weak references to the object (if defined)
+     |      # Метод экземпляра
+
+
+Этим беглый справочник по языку исчерпан. Как объекты устроены внутри и во что обходится каждая операция, разбирается в основных главах — [«Объекты и память»](./objects.md) и [«Классы»](./classes.md).
