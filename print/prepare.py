@@ -72,15 +72,14 @@ NOTEBOOKS = {
     "./examples/redpic.md",
     "./examples/envelope-optimize.md",
     "./examples/cadquery/layout.md",
-    "./dev/python/visualization/practice.md",
     "./dev/python/numpy-and-pandas.md",
 }
 
-# Разделы, вырезаемые целиком: интерактивные графики на бумаге
-# показать нельзя, остаётся один код без результата.
-DROP_SECTIONS = {
-    "./dev/python/visualization/practice.md": ["Часть 3. Plotly"],
-}
+# Разделы, вырезаемые целиком. Сейчас таких нет: интерактивные графики
+# на бумаге не показать, но резать из-за этого раздел не стоит — код,
+# которым график строится, проза вокруг него и статические иллюстрации
+# на бумаге работают.
+DROP_SECTIONS = {}
 
 # Сколько разобранных задач оставить в главе (остальные — списком).
 KEEP_TASKS = {"./cs/trees.md": 2, "./cs/graphs.md": 2}
@@ -814,6 +813,36 @@ def clean_output_blocks(text, limit=8):
     return "\n".join(out)
 
 
+def drop_empty_code_blocks(text):
+    """Выбрасывает блоки кода, в которых нет ни одной непустой строки.
+
+    Пустая ячейка, оставшаяся в конце блокнота, выгружается в markdown
+    открывающей и закрывающей строкой ```python без единой строки между
+    ними: на сайте её почти не видно, а на полосе набора она превращается
+    в серый прямоугольник ни о чём.
+    """
+    lines, out = text.split("\n"), []
+    i = 0
+    while i < len(lines):
+        if not lines[i].startswith("```"):
+            out.append(lines[i])
+            i += 1
+            continue
+        j = i + 1
+        while j < len(lines) and not lines[j].startswith("```"):
+            j += 1
+        if j < len(lines) and not any(s.strip() for s in lines[i + 1:j]):
+            i = j + 1
+            # не оставляем на месте блока две пустые строки подряд
+            if out and not out[-1].strip() and i < len(lines) \
+                    and not lines[i].strip():
+                i += 1
+            continue
+        out.extend(lines[i:j + 1])
+        i = j + 1
+    return "\n".join(out)
+
+
 def main(volume=None):
     """Готовит markdown одного тома (или всей книги, если volume=None)."""
     os.makedirs(IMG, exist_ok=True)
@@ -858,6 +887,7 @@ def main(volume=None):
         # а на формате А4 место под них есть
         text = clean_output_blocks(
             text, OUTPUT_LIMIT_NB if is_nb else OUTPUT_LIMIT)
+        text = drop_empty_code_blocks(text)
         text = strip_manual_numbering(text)
         # уровень: front-matter и главы верхнего уровня -> ##, вложенные -> ###
         text = shift_headings(text, 2 + level)

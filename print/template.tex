@@ -2,15 +2,13 @@
 
 %% ---------------------------------------------------------------
 %% Оригинал-макет по техническим требованиям ИПЦ НГУ:
-%% формат А5 (60x84 1/16), 148x210 мм; полоса набора 115x175 мм;
-%% поля: верхнее, правое, левое 17 мм, нижнее 20 мм;
-%% Times New Roman 10-11 пт, одинарный интервал, абзац 5 мм,
-%% колонцифра внизу по центру, автоматические переносы,
+%% формат А4 (60x84 1/8), 210x297 мм; полоса набора 170x257 мм;
+%% поля по 20 мм; Times New Roman 12 пт, одинарный интервал,
+%% абзац 10 мм, колонцифра внизу по центру, автоматические переносы,
 %% выравнивание по ширине.
 %% ---------------------------------------------------------------
 
-%% А4 (60x84 1/8): страница 210x297 мм, полоса набора 170x257 мм,
-%% поля по 20 мм. Нижнее поле берём 20 мм плюс колонцифра в footskip.
+%% Нижнее поле берём 20 мм плюс колонцифра в footskip.
 \usepackage[paperwidth=210mm,paperheight=297mm,
             top=20mm,left=20mm,right=20mm,bottom=20mm,
             footskip=12mm,headsep=6mm]{geometry}
@@ -44,7 +42,8 @@
 \makeatother
 \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
 \makesavenoteenv{longtable}
-%% таблицы данных набираем мельче — в полосе 115 мм иначе не помещаются
+%% таблицы данных набираем мельче — широкие выгрузки pandas
+%% и в полосу 170 мм иначе не помещаются
 \AtBeginEnvironment{longtable}{\footnotesize}
 \usepackage{caption}
 \usepackage[table]{xcolor}
@@ -104,7 +103,8 @@
 $highlighting-macros$
 
 \definecolor{shadecolor}{gray}{0.955}
-%% код набираем мелко и с переносом длинных строк — полоса набора узкая
+%% код набираем мелко и с переносом длинных строк: в листингах
+%% попадаются строки длиннее полосы набора
 \DefineVerbatimEnvironment{Highlighting}{Verbatim}%
   {commandchars=\\\{\},fontsize=\footnotesize,xleftmargin=3mm,
    breaklines,breakanywhere,breaksymbolleft={}}
