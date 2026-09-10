@@ -17,8 +17,6 @@
 | [Долгоиграющие процессы](./linux-structure-task.md) | [Внутреннее устройство Linux](../linux/structure.md) | `phys-dev/linux-structure-task` |
 | [Задачи на Python](./python-algo-task.md) | [Введение в алгоритмы](../cs/basic-algos.md), [Сложность операций с коллекциями](../dev/python/o-notation.md) | `phys-dev/python-algo-task` |
 | [Деплой стартапа](./kitty-startup-task.md) | [От скрипта к приложению](../dev/app.md), [Docker](../dev/docker.md), [Сети и веб-технологии](../dev/web.md), [Базы данных](../dev/bd.md) | `phys-dev/kitty-startup-task` |
-| [Сигнал осциллографа](./signal-pipeline-task.md) | [NumPy и pandas](../dev/python/numpy-and-pandas.md), [SciPy](../dev/python/scipy.md), [Визуализация на Python](../dev/python/visualization.md) | свой репозиторий |
-| [Профилирование расчёта](./profiling-task.md) | [С чего начинать оптимизацию](../perf/intro.md), [Почему Python не очень быстрый](../dev/python/optimization.md), [Что выжать из самого Python](../perf/python-tricks.md) | свой репозиторий |
 | [Итоговый проект](./final-project-requirements.md) | вся книга | свой репозиторий |
 
 Адрес репозитория складывается из `https://github.com/` и имени из таблицы.

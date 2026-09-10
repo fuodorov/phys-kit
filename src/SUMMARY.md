@@ -97,8 +97,6 @@
 - [Работа с долгоиграющими процессами](./practicum/linux-structure-task.md)
 - [Решение задач на Python и анализ сложности](./practicum/python-algo-task.md)
 - [Деплой стартапа](./practicum/kitty-startup-task.md)
-- [Обработка сигнала осциллографа](./practicum/signal-pipeline-task.md)
-- [Профилирование и векторизация расчёта](./practicum/profiling-task.md)
 - [Итоговый проект](./practicum/final-project-requirements.md)
 
 ---
