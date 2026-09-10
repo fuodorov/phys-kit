@@ -25,9 +25,6 @@ NumPy умеет две вещи, и обе нам понадобятся:
 
 Отсюда и две сильные стороны NumPy, к которым мы вернёмся ниже: векторизация и broadcasting.
 
-**Мотивирующий пример**
-![Imgur](https://i.imgur.com/z4GzOX6.png)
-
 
 ```python
 import numpy as np
@@ -407,17 +404,17 @@ x.copy()
 
 
 
-### Чтение данных с помощью функции [genfromtxt](https://docs.scipy.org/doc/numpy/reference/generated/numpy.genfromtxt.html#numpy.genfromtxt)
+### Сохранение и чтение массивов в бинарном формате
 
 
 ```python
-with open('out.npz', 'wb') as f:
+with open('out.npy', 'wb') as f:
     np.save(f, x)
     
-with open('out.npz', 'rb') as f:
+with open('out.npy', 'rb') as f:
     print(f.read())
     
-with open('out.npz', 'rb') as f:
+with open('out.npy', 'rb') as f:
     y = np.load(f)
     print(y)    
 ```
@@ -426,6 +423,8 @@ with open('out.npz', 'rb') as f:
     [0 1 2 3 4 5 6 7 8 9]
 
 
+
+### Чтение данных с помощью функции [genfromtxt](https://docs.scipy.org/doc/numpy/reference/generated/numpy.genfromtxt.html#numpy.genfromtxt)
 
 Дальше понадобится файл `iris_subset.txt`. Он не приложен и не нужен настоящий:
 числа в нём случайные, ботанического смысла в них нет (чашелистик длиной 1134 см
@@ -484,11 +483,11 @@ print('Значения столбца sepal_length_in_cm: %s'%iris['sepal_lengt
 sepal_length_setosa = iris['sepal_length_in_cm'][iris['class'] == 'setosa']
 sepal_length_versicolor = iris['sepal_length_in_cm'][iris['class'] == 'versicolor']
 
-print('Значения слтобца sepal_length_in_cm\n\tclass setosa: %s\n\tclass versicolor: %s'%(sepal_length_setosa, 
+print('Значения столбца sepal_length_in_cm\n\tclass setosa: %s\n\tclass versicolor: %s'%(sepal_length_setosa, 
                                                                                          sepal_length_versicolor))
 ```
 
-    Значения слтобца sepal_length_in_cm
+    Значения столбца sepal_length_in_cm
     	class setosa: [1.000e+00 1.134e+03 1.141e+03 7.320e+02]
     	class versicolor: [  1.   1. 144.   1.]
 
@@ -913,7 +912,7 @@ print("concatenate: ", np.concatenate((p, p), axis=3).shape)
 
 ### Типы
 
-Тип массива стоит выбирать сознательно. От него зависит и занимаемая память, и диапазон представимых значений. Посмотри, что происходит с числом 70000, уложенным в `uint16`, оно молча превращается в 4464. NumPy предупреждает об этом (и в будущих версиях будет считать ошибкой), но переполнение, прошедшее незамеченным, остаётся классическим источником тихо неверных результатов.
+Тип массива стоит выбирать сознательно. От него зависит и занимаемая память, и диапазон представимых значений. Посмотри, что происходит с числом 70000, уложенным в `uint16`. С версии NumPy 2.0 конструктор массива на таком значении падает с `OverflowError`, а молча обрезается оно только при явном приведении через `astype`, превращаясь в 4464; именно такое переполнение, прошедшее незамеченным, и остаётся классическим источником тихо неверных результатов.
 
 ```python
 x = [1, 2, 70000]
@@ -1011,7 +1010,7 @@ np.array([f(v) for v in np.arange(100000)])
 
     129 ms ± 861 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)
 
-Разница в семьдесят раз выглядит убедительно, но выводы, сделанные из неё сразу, будут поспешными. `np.vectorize` и генератор списка и правда вызывают `f` сто тысяч раз, и 130–150 миллисекунд составляют цену ста тысяч вызовов функции Python. А `apply_along_axis` с `axis=0` на одномерном массиве вызывает `f` один-единственный раз, передав в неё весь массив целиком, так что измерен здесь один векторный `np.sqrt`, а не поэлементный обход.
+Разница в семьдесят раз выглядит убедительно, но выводы, сделанные из неё сразу, будут поспешными. `np.vectorize` и списковое включение и правда вызывают `f` сто тысяч раз, и 130–150 миллисекунд составляют цену ста тысяч вызовов функции Python. А `apply_along_axis` с `axis=0` на одномерном массиве вызывает `f` один-единственный раз, передав в неё весь массив целиком, так что измерен здесь один векторный `np.sqrt`, а не поэлементный обход.
 
 Мораль та же, что и во введении. Прежде чем поверить отношению времён, разберись, что делает каждая из сравниваемых версий. А полезный вывод здесь другой: `np.vectorize` не векторизует, он лишь оборачивает цикл, спрятанный внутри, и ускорения от него ждать не стоит.
 
@@ -1542,7 +1541,7 @@ df[["Sex", "Cabin"]].describe()
 
 ### Срезы в DataFrame
 
-Самая частая ошибка новичка в pandas состоит в том, чтобы не заметить, что срез иногда представление на исходную таблицу, а иногда её копия. Разберём по порядку: сначала способы, отбирающие строки и столбцы, потом признаки, по которым представление отличают от копии.
+Самая частая ошибка новичка в pandas состоит в том, чтобы не заметить, что срез иногда представление на исходную таблицу, а иногда её копия. Разберём по порядку способы, отбирающие строки и столбцы, а в конце вернёмся к тому, как безопасно менять исходную таблицу.
 
 ### Индексация
 
@@ -1917,14 +1916,7 @@ slice_df = df[some_slice]
 slice_df["Fare"] = slice_df["Fare"] * 10
 ```
 
-    /tmp/ipykernel_984447/1355601167.py:2: SettingWithCopyWarning: 
-    A value is trying to be set on a copy of a slice from a DataFrame.
-    Try using .loc[row_indexer,col_indexer] = value instead
-    
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-      slice_df["Fare"] = slice_df["Fare"] * 10
-
-Это и есть знаменитый `SettingWithCopyWarning`, предупреждающий о самой дорогой ошибке новичка. Pandas прямо говорит, что не знает, во что ты сейчас записал, в исходную таблицу или в её копию. Привычка читать это предупреждение как ошибку и переписывать место, помеченное им, через `loc` сэкономит не один вечер отладки.
+С pandas 3.0 включён Copy-on-Write, и `SettingWithCopyWarning` из библиотеки убран. Стало тише, но не безопаснее: запись в `slice_df` теперь гарантированно уходит в копию, исходная таблица не меняется, и никто об этом не скажет. Поэтому правило прежнее и теперь единственное — менять исходную таблицу только через `df.loc[маска, столбец] = ...`.
 
 Столбцы, нужные в расчёте, отбираются названием или списком названий, переданным в ```[]```.
 
@@ -3456,10 +3448,6 @@ df["Cabin"].fillna(3).head(5)
 df["Cabin"].bfill().head(15)
 ```
 
-    /tmp/ipykernel_984447/671977776.py:1: FutureWarning: Series.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
-      df["Cabin"].bfill().head(15)
-
-
 
 
 
@@ -3664,7 +3652,3 @@ tdf["Sex"].hist()
     
 
 
-
-```python
-
-```

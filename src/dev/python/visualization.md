@@ -338,3 +338,5 @@ spot.opts(width=380, height=340, cmap='inferno', colorbar=True, logz=True)
 - [plotly.com/python](https://plotly.com/python/), справочник по типам графиков с разобранными примерами;
 - [holoviews.org](https://holoviews.org) и [holoviz.org](https://holoviz.org), документация HoloViews и обзор всей экосистемы;
 - [Уравнение огибающей](../../examples/kenv.md) и [коррекция орбиты](../../examples/orbit-correction.md), главы этой книги, откуда взяты данные для примеров.
+
+> **Задание.** Проведи сырой файл через весь путь, от разбора шапки до графика с погрешностями: [«Обработка сигнала осциллографа»](../../practicum/signal-pipeline-task.md).
