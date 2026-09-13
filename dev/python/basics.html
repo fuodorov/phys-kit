@@ -182,11 +182,11 @@
 <blockquote>
 <p>Беглый справочник для тех, кто Python не знает вовсе. Полностью тема разобрана в основных главах книги; в печатное издание приложение не вошло.</p>
 </blockquote>
-<p>Python представляет собой высокоуровневый мультипарадигменный язык программирования с динамической типизацией, о коде на котором часто говорят, что он почти как псевдокод: очень мощные идеи выражаются буквально в нескольких строках и при этом легко читаются.</p>
-<p>Рекомендуем прочитать <a href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>.</p>
+<p>Python — высокоуровневый мультипарадигменный язык программирования с динамической типизацией; код на нём часто сравнивают с псевдокодом: мощные идеи выражаются в нескольких строках и легко читаются.</p>
+<p>Прочитай <a href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a>.</p>
 <h2 id="Версии-python-и-Дзен-python"><a class="header" href="#Версии-python-и-Дзен-python">Версии Python и Дзен Python</a></h2>
-<p>Сейчас поддерживаются версии Python 3.X, тогда как поддержка Python 2.7 прекратилась в 2020 году, а весь код в книге рассчитан на Python 3.10 и новее.</p>
-<p>Проверить свою версию Python можно в командной строке, запустив python --version.</p>
+<p>Поддерживаются версии Python 3.X; поддержка Python 2.7 прекратилась в 2020 году. Весь код в книге рассчитан на Python 3.10 и новее.</p>
+<p>Версию Python показывает команда python --version.</p>
 <pre><code class="language-python">!python --version
 </code></pre>
 <pre><code>Python 3.7.4
@@ -217,7 +217,7 @@ Namespaces are one honking great idea -- let's do more of those!
 </code></pre>
 <h2 id="Основные-типы-данных"><a class="header" href="#Основные-типы-данных">Основные типы данных</a></h2>
 <h3 id="Числа"><a class="header" href="#Числа">Числа</a></h3>
-<p>Целые и вещественные числа работают так, как ты и ожидаешь по опыту других языков.</p>
+<p>Целые и вещественные числа работают как в других языках.</p>
 <pre><code class="language-python">x = 3
 print(x, type(x))
 </code></pre>
@@ -248,15 +248,15 @@ print(y, y + 1, y * 2, y ** 2) # Выведет "2.5 3.5 5.0 6.25"
 <pre><code>&lt;class 'float'&gt;
 2.5 3.5 5.0 6.25
 </code></pre>
-<p>В отличие от многих языков, в Python нет унарных операторов инкремента (x++) и декремента (x--). Зато есть встроенные типы для длинных целых и комплексных чисел, все подробности о которых найдёшь в <a href="https://docs.python.org/3.7/library/stdtypes.html#numeric-types-int-float-long-complex">документации</a>.</p>
+<p>В отличие от многих языков, в Python нет унарных операторов инкремента (x++) и декремента (x--). Целые здесь неограниченной точности — отдельного типа для длинных целых, как в Python 2, нет, <code>int</code> растёт, пока хватает памяти, — и есть встроенный тип комплексных чисел; подробности в <a href="https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex">документации</a>.</p>
 <h3 id="Булевы-значения"><a class="header" href="#Булевы-значения">Булевы значения</a></h3>
-<p>В Python реализованы все привычные операторы булевой логики, но вместо символов (<code>&amp;&amp;</code>, <code>||</code> и т.д.) используются английские слова.</p>
+<p>В Python есть все привычные операторы булевой логики, но вместо символов (<code>&amp;&amp;</code>, <code>||</code> и т.д.) используются английские слова.</p>
 <pre><code class="language-python">T, F = True, False
 print(type(T)) # Выведет "&lt;class 'bool'&gt;"
 </code></pre>
 <pre><code>&lt;class 'bool'&gt;
 </code></pre>
-<p>А теперь посмотрим на операции.</p>
+<p>Операции:</p>
 <pre><code class="language-python">print(T and F) # Логическое И;
 print(T or F)  # Логическое ИЛИ;
 print(not T)   # Логическое НЕ;
@@ -284,7 +284,13 @@ print(hw12)  # выведет "hello world 12"
 </code></pre>
 <pre><code>hello world 12
 </code></pre>
-<p>У строковых объектов есть куча полезных методов.</p>
+<p>Так строки собирали до версии 3.6, и в чужом коде этот стиль ещё встречается, но новое пишут f-строками: перед кавычками ставится буква <code>f</code>, а всё, что стоит внутри строки в фигурных скобках, вычисляется и подставляется на место.</p>
+<pre><code class="language-python">n = 12
+print(f'{hello} {world} {n}')  # выведет "hello world 12"
+</code></pre>
+<pre><code>hello world 12
+</code></pre>
+<p>У строк много полезных методов.</p>
 <pre><code class="language-python">s = "hello"
 print(s.capitalize())  # Первая буква становится заглавной; выведет "Hello"
 print(s.upper())       # Перевод строки в верхний регистр; выведет "HELLO"
@@ -301,11 +307,11 @@ HELLO
 he(ell)(ell)o
 world
 </code></pre>
-<p>Список всех строковых методов найдёшь в <a href="https://docs.python.org/3.7/library/stdtypes.html#string-methods">документации</a>.</p>
+<p>Список всех строковых методов — в <a href="https://docs.python.org/3/library/stdtypes.html#string-methods">документации</a>.</p>
 <h2 id="Контейнеры"><a class="header" href="#Контейнеры">Контейнеры</a></h2>
-<p>К встроенным контейнерным типам Python относятся списки, словари, множества и кортежи.</p>
+<p>Встроенные контейнерные типы Python — списки, словари, множества и кортежи.</p>
 <h3 id="Списки"><a class="header" href="#Списки">Списки</a></h3>
-<p>Список служит аналогом массива в Python, но его размер можно менять, а элементы могут быть разных типов.</p>
+<p>Список — аналог массива, но его размер можно менять, а элементы могут быть разных типов.</p>
 <pre><code class="language-python">xs = [3, 1, 2]   # Создаём список
 print(xs, xs[2])
 print(xs[-1])     # Отрицательные индексы отсчитываются с конца списка; выведет "2"
@@ -328,9 +334,9 @@ print(x, xs)
 </code></pre>
 <pre><code>bar [3, 1, 'foo']
 </code></pre>
-<p>Как обычно, все кровавые подробности о списках найдёшь в <a href="https://docs.python.org/3.7/tutorial/datastructures.html#more-on-lists">документации</a>.</p>
+<p>Подробности о списках — в <a href="https://docs.python.org/3/tutorial/datastructures.html#more-on-lists">документации</a>.</p>
 <h3 id="Срезы"><a class="header" href="#Срезы">Срезы</a></h3>
-<p>Помимо доступа к элементам списка по одному, в Python есть лаконичный синтаксис для работы с подсписками, называемый срезами (slicing).</p>
+<p>Кроме доступа к элементам по одному, в Python есть синтаксис для работы с подсписками — срезы (slicing).</p>
 <pre><code class="language-python">nums = list(range(5))  # range не создаёт список, поэтому оборачиваем в list
 print(nums)         # Выведет "[0, 1, 2, 3, 4]"
 print(nums[2:4])    # Срез с индекса 2 до 4 (не включая); выведет "[2, 3]"
@@ -347,7 +353,7 @@ print(nums[:-1])    # Индексы среза могут быть отрица
 [0, 1, 2, 3]
 </code></pre>
 <h3 id="Циклы"><a class="header" href="#Циклы">Циклы</a></h3>
-<p>Пройтись циклом по элементам списка можно так.</p>
+<p>Цикл по элементам списка:</p>
 <pre><code class="language-python">animals = ['cat', 'dog', 'monkey']
 for animal in animals:
     print(animal)
@@ -356,17 +362,17 @@ for animal in animals:
 dog
 monkey
 </code></pre>
-<p>Если внутри тела цикла тебе нужен ещё и индекс каждого элемента, используй встроенную функцию <code>enumerate</code>.</p>
+<p>Если в теле цикла нужен ещё и индекс элемента, используй встроенную функцию <code>enumerate</code>.</p>
 <pre><code class="language-python">animals = ['cat', 'dog', 'monkey']
 for idx, animal in enumerate(animals):
-    print('#%d: %s' % (idx + 1, animal))
+    print(f'#{idx + 1}: {animal}')
 </code></pre>
 <pre><code>#1: cat
 #2: dog
 #3: monkey
 </code></pre>
-<h3 id="Генераторы-списков-list-comprehensions"><a class="header" href="#Генераторы-списков-list-comprehensions">Генераторы списков (list comprehensions)</a></h3>
-<p>При программировании нам часто нужно преобразовать данные одного вида в другой, и в качестве простого примера рассмотрим код, вычисляющий квадраты чисел.</p>
+<h3 id="Списковые-включения-list-comprehensions"><a class="header" href="#Списковые-включения-list-comprehensions">Списковые включения (list comprehensions)</a></h3>
+<p>Часто нужно преобразовать данные одного вида в другой. Простой пример — код, вычисляющий квадраты чисел.</p>
 <pre><code class="language-python">nums = [0, 1, 2, 3, 4]
 squares = []
 for x in nums:
@@ -375,7 +381,7 @@ print(squares)
 </code></pre>
 <pre><code>[0, 1, 4, 9, 16]
 </code></pre>
-<p>Этот код можно записать проще с помощью генератора списка (list comprehension).</p>
+<p>То же самое списковым включением (list comprehension).</p>
 <pre><code class="language-python">nums = [0, 1, 2, 3, 4]
 squares = [x ** 2 for x in nums]
 print(squares)
@@ -390,7 +396,7 @@ print(even_squares)
 <pre><code>[0, 4, 16]
 </code></pre>
 <h3 id="Словари"><a class="header" href="#Словари">Словари</a></h3>
-<p>Словарь хранит пары (ключ, значение), примерно как <code>Map</code> в Java или объект в Javascript, а использовать его можно так.</p>
+<p>Словарь хранит пары (ключ, значение), примерно как <code>Map</code> в Java или объект в Javascript.</p>
 <pre><code class="language-python">d = {'cat': 'cute', 'dog': 'furry'}  # Создаём новый словарь с данными
 print(d['cat'])       # Получаем запись из словаря; выведет "cute"
 print('cat' in d)     # Проверяем, есть ли в словаре ключ; выведет "True"
@@ -414,17 +420,17 @@ print(d.get('fish', 'N/A')) # ключа "fish" больше нет; вывед�
 </code></pre>
 <pre><code>N/A
 </code></pre>
-<p>Всё, что нужно знать о словарях, найдёшь в <a href="https://docs.python.org/3.7/library/stdtypes.html#dict">документации</a>, а итерироваться по ключам словаря легко.</p>
+<p>Подробности о словарях — в <a href="https://docs.python.org/3/library/stdtypes.html#dict">документации</a>. Итерация по ключам словаря:</p>
 <pre><code class="language-python">d = {'person': 2, 'cat': 4, 'spider': 8}
 for animal in d:
     legs = d[animal]
-    print('A %s has %d legs' % (animal, legs))
+    print(f'A {animal} has {legs} legs')
 </code></pre>
 <pre><code>A person has 2 legs
 A cat has 4 legs
 A spider has 8 legs
 </code></pre>
-<p>Генераторы словарей (dictionary comprehensions) похожи на list comprehensions, но позволяют легко строить словари.</p>
+<p>Словарные включения (dictionary comprehensions) похожи на списковые, но строят словари.</p>
 <pre><code class="language-python">nums = [0, 1, 2, 3, 4]
 even_num_to_square = {x: x ** 2 for x in nums if x % 2 == 0}
 print(even_num_to_square)
@@ -432,7 +438,7 @@ print(even_num_to_square)
 <pre><code>{0: 0, 2: 4, 4: 16}
 </code></pre>
 <h3 id="Множества"><a class="header" href="#Множества">Множества</a></h3>
-<p>Множеством называют неупорядоченную коллекцию различных элементов, что удобнее всего разобрать на простом примере.</p>
+<p>Множество — неупорядоченная коллекция различных элементов.</p>
 <pre><code class="language-python">animals = {'cat', 'dog'}
 print('cat' in animals)   # Проверяем, есть ли элемент в множестве; выведет "True"
 print('fish' in animals)  # выведет "False"
@@ -455,24 +461,25 @@ print(len(animals))
 <pre><code>3
 2
 </code></pre>
-<p><em>Циклы</em>. Итерация по множеству синтаксически ничем не отличается от итерации по списку; но так как множества неупорядочены, нельзя строить предположения о том, в каком порядке ты обойдёшь их элементы.</p>
+<p><em>Циклы</em>. Итерация по множеству синтаксически не отличается от итерации по списку; но множества неупорядочены, и на порядок обхода полагаться нельзя.</p>
 <pre><code class="language-python">animals = {'cat', 'dog', 'fish'}
 for idx, animal in enumerate(animals):
-    print('#%d: %s' % (idx + 1, animal))
-# Выведет "#1: fish", "#2: dog", "#3: cat"
+    print(f'#{idx + 1}: {animal}')
+# Порядок зависит от хеш-сида процесса и от запуска к запуску меняется
 </code></pre>
+<p>Один из возможных порядков:</p>
 <pre><code>#1: fish
 #2: dog
 #3: cat
 </code></pre>
-<p>Генераторы множеств: как и списки со словарями, множества легко строить с помощью set comprehensions.</p>
+<p>Множественные включения: как списки и словари, множества строятся с помощью set comprehensions.</p>
 <pre><code class="language-python">from math import sqrt
 print({int(sqrt(x)) for x in range(30)})
 </code></pre>
 <pre><code>{0, 1, 2, 3, 4, 5}
 </code></pre>
 <h3 id="Кортежи"><a class="header" href="#Кортежи">Кортежи</a></h3>
-<p>Кортеж представляет собой (неизменяемый) упорядоченный список значений, во многом похожий на обычный список, а одно из важнейших отличий состоит в том, что кортежи можно использовать как ключи в словарях и как элементы множеств, а списки нельзя, что и показывает тривиальный пример ниже.</p>
+<p>Кортеж — неизменяемый упорядоченный список значений, во многом похожий на обычный список. Одно из важнейших отличий: кортежи можно использовать как ключи в словарях и как элементы множеств, а списки нельзя.</p>
 <pre><code class="language-python">d = {(x, x + 1): x for x in range(10)}  # Создаём словарь с ключами-кортежами
 t = (5, 6)       # Создаём кортеж
 print(type(t))
@@ -484,7 +491,7 @@ print(d[(1, 2)])
 1
 </code></pre>
 <h2 id="Функции"><a class="header" href="#Функции">Функции</a></h2>
-<p>Функции в Python определяются с помощью ключевого слова <code>def</code>.</p>
+<p>Функции определяются ключевым словом <code>def</code>.</p>
 <pre><code class="language-python">def sign(x: float) -&gt; str:
     '''Function sign''' # строка документации
     
@@ -509,7 +516,7 @@ positive
 sign(x: float) -&gt; str
     Function sign
 </code></pre>
-<p>Мы часто будем определять функции с необязательными именованными аргументами, например так.</p>
+<p>Функция с необязательными именованными аргументами:</p>
 <pre><code class="language-python">def hello(name: str, loud: bool=False) -&gt; None:
     '''Function hello
     
@@ -518,9 +525,9 @@ sign(x: float) -&gt; str
     '''
     
     if loud:
-        print('HELLO, %s' % name.upper())
+        print(f'HELLO, {name.upper()}')
     else:
-        print('Hello, %s!' % name)
+        print(f'Hello, {name}!')
 
 hello('Bob')
 hello('Fred', loud=True)
@@ -539,7 +546,7 @@ hello(name: str, loud: bool = False) -&gt; None
     then the name is printed in capital letters.
 </code></pre>
 <h2 id="Классы"><a class="header" href="#Классы">Классы</a></h2>
-<p>Синтаксис определения классов в Python прост.</p>
+<p>Определение класса:</p>
 <pre><code class="language-python">class Greeter:
     '''Class Greeter
     
@@ -555,9 +562,9 @@ hello(name: str, loud: bool = False) -&gt; None
     # Метод экземпляра
     def greet(self, loud: bool=False) -&gt;None:
         if loud:
-            print('HELLO, %s!' % self.name.upper())
+            print(f'HELLO, {self.name.upper()}!')
         else:
-            print('Hello, %s' % self.name)
+            print(f'Hello, {self.name}')
 
 g = Greeter('Fred')  # Создаём экземпляр класса Greeter
 g.greet()            # Вызываем метод экземпляра; выведет "Hello, Fred"
@@ -585,17 +592,9 @@ class Greeter(builtins.object)
  |      Initialize self.  See help(type(self)) for accurate signature.
  |  
  |  greet(self, loud: bool = False) -&gt; None
- |      # Instance method
- |  
- |  ----------------------------------------------------------------------
- |  Data descriptors defined here:
- |  
- |  __dict__
- |      dictionary for instance variables (if defined)
- |  
- |  __weakref__
- |      list of weak references to the object (if defined)
+ |      # Метод экземпляра
 </code></pre>
+<p>Как объекты устроены внутри и во что обходится каждая операция, разбирается в основных главах — <a href="./objects.html">«Объекты и память»</a> и <a href="./classes.html">«Классы»</a>.</p>
 
                     </main>
 
