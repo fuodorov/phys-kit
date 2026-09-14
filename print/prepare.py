@@ -54,8 +54,8 @@ VOLUMES = {
 }
 
 # Главы, дословно дублирующие материал других разделов.
-# Экспресс-курс по Python пересказывает темы разделов «Погружаемся
-# в Python» и «Обрабатываем данные», поэтому в книге его нет.
+# Экспресс-курс по Python пересказывает темы разделов «Язык Python»
+# и «Обработка данных», поэтому в книге его нет.
 # Приложение с экспресс-курсом остаётся только в электронной версии:
 # основы языка, NumPy и Matplotlib разобраны в книге полными главами,
 # а здесь дан беглый справочник для тех, кто Python не знает вовсе.
@@ -612,7 +612,7 @@ def brief_practicum(text, max_items=8):
     lines = text.split("\n")
     head = lines[0] if lines and lines[0].startswith("# ") else ""
     body, items, in_fence, repo = [], 0, False, ""
-    deliver = []          # раздел «Что сдавать» печатаем целиком
+    deliver = []          # раздел «Требования к сдаче» печатаем целиком
     in_deliver = False
     for line in lines[1:]:
         if line.startswith("```"):
@@ -628,7 +628,7 @@ def brief_practicum(text, max_items=8):
             # Флаг переключаем только на втором уровне: внутри раздела
             # бывают подрубрики, и они не должны его сбрасывать.
             if len(head_match.group(1)) == 2:
-                in_deliver = head_match.group(2).strip().startswith("Что сдавать")
+                in_deliver = head_match.group(2).strip().startswith("Требования к сдаче")
             continue
         stripped = line.strip()
         if not stripped:
@@ -662,7 +662,7 @@ def brief_practicum(text, max_items=8):
     out.extend(body)
     if deliver:
         out.append("")
-        out.append("**Что сдавать.**")
+        out.append("**Требования к сдаче.**")
         out.append("")
         out.extend(deliver)
     out.append("")

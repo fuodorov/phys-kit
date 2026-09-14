@@ -2,7 +2,7 @@
 
 [О себе](./intro/about-me.md)
 
-# Собираем инструменты
+# Инструменты разработчика
 
 - [ИИ для разработки](./ai/intro.md)
   - [Контекст и скорость изменений](./ai/context.md)
@@ -13,7 +13,7 @@
   - [Вопросы и ответы](./ai/qa.md)
 - [Git](./dev/git.md)
 
-# Осваиваем Linux
+# Операционная система Linux
 
 - [Основы Linux](./linux/intro.md)
 - [Инструменты](./linux/tools.md)
@@ -23,9 +23,9 @@
 - [Внутреннее устройство Linux](./linux/structure.md)
 - [Docker](./dev/docker.md)
 
-# Погружаемся в Python
+# Язык Python
 
-- [Как устроен Python](./dev/python/init.md)
+- [Устройство интерпретатора Python](./dev/python/init.md)
 - [Объекты и память](./dev/python/objects.md)
 - [Коллекции](./dev/python/collections.md)
 - [Сложность операций с коллекциями](./dev/python/o-notation.md)
@@ -34,9 +34,9 @@
 - [Декораторы и functools](./dev/python/decorators.md)
 - [Классы](./dev/python/classes.md)
 
-# Разбираемся в алгоритмах
+# Алгоритмы и структуры данных
 
-- [Зачем физику алгоритмы](./cs/intro.md)
+- [Роль алгоритмов в работе физика](./cs/intro.md)
 - [Введение в алгоритмы](./cs/basic-algos.md)
 - [Основные структуры данных](./cs/basic-structures.md)
 - [Рекурсия и сортировки](./cs/recurs-and-sorts.md)
@@ -44,7 +44,7 @@
 - [Деревья](./cs/trees.md)
 - [Графы](./cs/graphs.md)
 
-# Пишем надёжный код
+# Инженерные практики
 
 - [Жизненный цикл ПО](./dev/life.md)
 - [Требования к коду](./dev/python/requirements.md)
@@ -52,7 +52,7 @@
 - [Сети и веб-технологии](./dev/web.md)
 - [Базы данных](./dev/bd.md)
 
-# Обрабатываем данные
+# Обработка данных
 
 - [Научные библиотеки Python](./dev/python/intro.md)
 - [NumPy и pandas](./dev/python/numpy-and-pandas.md)
@@ -64,17 +64,17 @@
   - [Нейронные сети](./ds/nn.md)
   - [Инструменты: scikit-learn](./ds/tools.md)
 
-# Ускоряем код
+# Ускорение расчётов
 
 - [С чего начинать оптимизацию](./perf/intro.md)
-- [Почему Python не очень быстрый](./dev/python/optimization.md)
-- [Что выжать из самого Python](./perf/python-tricks.md)
+- [Причины низкой скорости Python](./dev/python/optimization.md)
+- [Оптимизация средствами самого Python](./perf/python-tricks.md)
 - [Скорость выполнения программ](./perf/perf.md)
 - [Многопоточность и GIL](./perf/gil.md)
 - [Асинхронность](./perf/async.md)
 - [CUDA и вычисления на GPU](./perf/cuda.md)
 
-# Учимся у других
+# Разбор реальных кодов
 
 - [Коды и скрипты](./examples/intro.md)
 - [Уравнение огибающей Капчинского—Владимирского для пучка заряженных частиц](./examples/kenv.md)
@@ -87,9 +87,9 @@
 - [Автономный исследователь на языковых моделях](./examples/ai-scientist.md)
 - [Асинхронное API для кинотеатра](./examples/async-api.md)
 
-# Работаем самостоятельно
+# Практикум
 
-- [Как устроены задания](./practicum/intro.md)
+- [Структура заданий](./practicum/intro.md)
 - [Ревью чужого кода](./practicum/review-code-task.md)
 - [Генерация текста на основе данных](./practicum/markov-chain-task.md)
 - [Установка Arch Linux вручную с RAID1 и UEFI](./practicum/booting-linux-task.md)

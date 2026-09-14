@@ -1,4 +1,4 @@
-# Как устроен Python
+# Устройство интерпретатора Python
 
 
 > … in December 1989, I was looking for a “hobby” programming
