@@ -285,4 +285,4 @@ for k in range(1, len(svd_mean)):
 - [S. Y. Lee. Accelerator Physics](https://www.worldscientific.com/worldscibooks/10.1142/8335), теория замкнутой орбиты и коррекции.
 - [CERN Accelerator School: Orbit correction](https://cas.web.cern.ch/previous-schools), лекции по коррекции орбиты и SVD.
 - [J. Kaiser et al. Bridging the gap between machine learning and particle accelerator physics (PRAB 27, 054601, 2024)](https://doi.org/10.1103/PhysRevAccelBeams.27.054601), применения МО в ускорителях.
-- [Раздел про машинное обучение](../ds/intro.md) и [главу про нейронные сети](../ds/nn.md) этой книги, где собрана вся использованная здесь математика.
+- [Раздел про машинное обучение](../ds/intro.md) и [глава про нейронные сети](../ds/nn.md) этой книги, где собрана вся использованная здесь математика.
